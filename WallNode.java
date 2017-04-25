@@ -34,13 +34,15 @@ public class WallNode {
 		}
 		System.out.println("[DEBUG] numNodes: " + numNodes);
 		System.out.println("[DEBUG] my id: " + myID);
+		System.out.println("[DEBUG] numRows: " + numRows);
 
 		//DUMMY ENQUEUE for id 0
-		if(myID == numNodes - 1){
-			enqueueRequest(new Request(-2, -1, "dummy"));
-			outstandingGrantID = -2;
-			outstandingGrantPriority = -1;
-		}
+		// if(myID == numNodes - 1){
+		// 	enqueueRequest(new Request(-2, -1, "dummy"));
+		// 	outstandingGrantID = -2;
+		// 	outstandingGrantPriority = -1;
+		// }
+
 		
 
     	// for(int i = 0; i < numRows; i++){
@@ -69,18 +71,32 @@ public class WallNode {
     			break;
     		}
     	}
+    	boolean foundColumn = false;
     	nodeCount = 0;
     	for(int i = 0; i < numRows; i++){
     		for(int j = 0; j < wallStructure.get(i); j++){
     			if(nodeCount == myID){
+    				System.out.println("nodeCount: " + nodeCount + " myID: " + myID);
     				myCol = j;
+    				foundColumn = true;
     				break;
     			}
     			nodeCount++;
     		}
+    		if(foundColumn)
+    			break;
     	}
     	System.out.println("[DEBUG] myRow: " + myRow);
     	System.out.println("[DEBUG] myCol: " + myCol);
+
+
+		//DUMMY ENQUEUE
+		if(myRow == wallStructure.size()-1){
+			enqueueRequest(new Request(-2, -1, "dummy"));
+			outstandingGrantID = -2;
+			outstandingGrantPriority = -1;
+		}
+
     	//Establish request set
     	//Note all own row port numbers
     	for(int i = 0; i < wallStructure.get(myRow); i++){
@@ -94,25 +110,45 @@ public class WallNode {
     		myRequestSetPorts.add(wallPorts.get(i).get(myID%rowSize));
     	}
     	for(int i = 0; i < myRequestSetPorts.size(); i++){
-    		System.out.println("[DEBUG] port: " + myRequestSetPorts.get(i));
+    		System.out.println("[DEBUG] request port: " + myRequestSetPorts.get(i));
     	}
     	
     	//Note index of each node in request set
     	nodeCount = 0;
+    	int runningRowTotal = 0;
     	for(int i = 0; i < numRows; i++){
     		for(int j = 0; j < wallStructure.get(i); j++){
-    			if(i == myRow){
-    				myRequestSetIndexes.add(new Integer(nodeCount));
+    			// if(i == myRow){
+    			// 	myRequestSetIndexes.add(new Integer(nodeCount));
+    			// 	nodeCount++;
+    			// }
+    			// else if(i > myRow){
+    			// 	System.out.println("nodeCount: " + nodeCount);
+    			// 	System.out.println("i: " + i);
+    			// 	myRequestSetIndexes.add(nodeCount + myID%wallStructure.get(i));
+    			// 	nodeCount+=wallStructure.get(i);
+    			// 	break;
+    			// }
+    			// else{
+    			// 	nodeCount++;
+    			// }
+    			if(i < myRow){
+    				break;
+    			}
+    			else if(i == myRow){
+    				myRequestSetIndexes.add(runningRowTotal + j);
     			}
     			else if(i > myRow){
-    				myRequestSetIndexes.add(nodeCount + myID%wallStructure.get(i));
+    				myRequestSetIndexes.add(runningRowTotal + (myCol%wallStructure.get(i)));
+    				break;
     			}
-    			nodeCount++;
     		}
+    		runningRowTotal += wallStructure.get(i);
     	}
     	for(int i = 0; i < myRequestSetIndexes.size(); i++){
-    		System.out.println("[DEBUG] index: " + myRequestSetIndexes.get(i));
+    		System.out.println("[DEBUG] request index: " + myRequestSetIndexes.get(i));
     	}
+
 
 
     	ReceiveMessagesThread rmt = new ReceiveMessagesThread(wallPorts.get(myRow).get(myCol));
