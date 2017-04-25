@@ -345,15 +345,6 @@ public class WallNode {
   	}
 
   	public static int findPortByID(int id){
-  		int port = 0;
-  		for(int i = 0; i < wallPorts.size(); i++){
-  			for(int j = 0; j < wallPorts.get(i).size(); j++)
-  				if(port == id){
-  					port = wallPorts.get(i).get(j);
-  					return port;
-  				}
-  				port++;
-  		}
-  		return port;
+  		return 48620 + id; 
   	}
 }

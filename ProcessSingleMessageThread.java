@@ -45,17 +45,17 @@ public class ProcessSingleMessageThread implements Runnable {
             out.println("grant " + WallNode.myID);
           }
           else{
-            int tempPri = WallNode.outstandingGrantPriority;
-            if(tempPri <= requesterTimestamp){
+            // int tempPri = WallNode.outstandingGrantPriority;
+            // if(tempPri <= requesterTimestamp){
               //Send failed message
               out.println("failed " + WallNode.myID);
-            }
+            //}
             //TODO
-            else{
-              //Send inquire to grantID process
-              System.out.println("should Be Sending Inquire from me: " + WallNode.myID);
+            // else{
+            //   //Send inquire to grantID process
+            //   System.out.println("should Be Sending Inquire from me: " + WallNode.myID);
 
-            }
+            // }
           }
           //
 
@@ -73,6 +73,10 @@ public class ProcessSingleMessageThread implements Runnable {
             break;
           }
           //Send grant to head of queue
+          int portOfHeadRequest = WallNode.findPortByID(WallNode.requestQueue.get(0).serverID);
+          System.out.println("Port# for head of queue which we will send the grant to: " + portOfHeadRequest);
+          WallNode.outstandingGrantID = WallNode.requestQueue.get(0).serverID;
+          WallNode.outstandingGrantPriority = WallNode.requestQueue.get(0).timestamp;
           try (
             //Default: Connect to TCP Socket
             Socket socket2 = new Socket("localHost", WallNode.findPortByID(WallNode.requestQueue.get(0).serverID));
