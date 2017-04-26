@@ -32,9 +32,9 @@ public class WallNode {
 		for(int i = 0; i < numRows; i++){
 			wallStructure.add(new Integer(sc.nextInt()));
 		}
-		System.out.println("[DEBUG] numNodes: " + numNodes);
-		System.out.println("[DEBUG] my id: " + myID);
-		System.out.println("[DEBUG] numRows: " + numRows);
+		// System.out.println("[DEBUG] numNodes: " + numNodes);
+		// System.out.println("[DEBUG] my id: " + myID);
+		// System.out.println("[DEBUG] numRows: " + numRows);
 
 		//DUMMY ENQUEUE for id 0
 		// if(myID == numNodes - 1){
@@ -86,8 +86,8 @@ public class WallNode {
     		if(foundColumn)
     			break;
     	}
-    	System.out.println("[DEBUG] myRow: " + myRow);
-    	System.out.println("[DEBUG] myCol: " + myCol);
+    	// System.out.println("[DEBUG] myRow: " + myRow);
+    	// System.out.println("[DEBUG] myCol: " + myCol);
 
 
 		//DUMMY ENQUEUE
@@ -251,7 +251,7 @@ public class WallNode {
 	    List<Callable<Integer>> requestTaskList = new ArrayList<Callable<Integer>>();
 	    //Create request thread to be sent to each server
 	    for(int i = 0; i < myRequestSetIndexes.size(); i++){
-			requestTaskList.add(new RequestThread("localHost", myRequestSetPorts.get(i), myID, clock, "request", "request", clock));
+			requestTaskList.add(new RequestThread("localHost", myRequestSetIndexes.get(i) + 48620, myID, clock, "request", "request", clock));
 	    }
 	    //System.out.println(requestTaskList.size());
 	    List<Future<Integer>> requestFutures = new ArrayList<Future<Integer>>();
@@ -271,15 +271,15 @@ public class WallNode {
 	    }
 	    //Set grant status for request set based on futures
 	    int index = 0;
-	    System.out.println("request response count = " + requestResponses.size());
+	    //System.out.println("request response count = " + requestResponses.size());
 	    for(int i = 0; i < requestResponses.size(); i++){
-	    	System.out.println("Received future " + requestResponses.get(i) + " from response");
+	    	//System.out.println("Received future " + requestResponses.get(i) + " from response");
 	    	if( requestResponses.get(i) == 0){//received grant
 	    		index = myRequestSetIndexes.get(i);
 	    		grantsFromRequestSetNodes.set(index, new Integer(1));
 	    	}
 	    	else{//received failed
-	    		System.out.println("Request set index for response processing: " + myRequestSetIndexes.get(i));
+	    		//System.out.println("Request set index for response processing: " + myRequestSetIndexes.get(i));
 	    		grantsFromRequestSetNodes.set(myRequestSetIndexes.get(i), new Integer(-1));	    	
 	    	}
 
@@ -290,8 +290,8 @@ public class WallNode {
 		ExecutorService executor = Executors.newCachedThreadPool();
 	    List<Callable<Integer>> releaseTaskList = new ArrayList<Callable<Integer>>();
 	    //Create request thread to be sent to each server
-	    for(int i = 0; i < myRequestSetPorts.size(); i++){
-			releaseTaskList.add(new ReleaseThread("localHost", myRequestSetPorts.get(i), myID, clock, "release", "release", clock));
+	    for(int i = 0; i < myRequestSetIndexes.size(); i++){
+			releaseTaskList.add(new ReleaseThread("localHost", myRequestSetIndexes.get(i) + 48620, myID, clock, "release", "release", clock));
 	    }
 	    //System.out.println(requestTaskList.size());
 	    List<Future<Integer>> releaseFutures = new ArrayList<Future<Integer>>();

@@ -16,9 +16,9 @@ public class ReceiveMessagesThread implements Runnable{
 	      while(true){
 	      	System.out.println("Waiting for new request");
 	        Thread thread = new Thread(new ProcessSingleMessageThread(serverSocket.accept()));
-	        System.out.println("Received request");
+	        //System.out.println("Received request");
 	        thread.start();
-	        System.out.println("Called start");
+	        //System.out.println("Called start");
 	      }
 	    } catch(IOException e){
 	        e.printStackTrace();
